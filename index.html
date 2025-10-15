@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduAI - Intelligent Learning Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --secondary: #10B981;
+            --dark: #1F2937;
+            --light: #F9FAFB;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F3F4F6;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary) 0%, #7C3AED 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .chat-message-enter {
+            animation: fadeIn 0.3s ease-in;
+        }
+        /* Designer profile & settings styles */
+        .profile-card {
+            background: linear-gradient(135deg, rgba(79,70,229,0.06), rgba(99,102,241,0.04));
+            border: 1px solid rgba(79,70,229,0.06);
+        }
+        .fancy-input { border: 1px solid #E6E9F2; padding: 0.6rem; border-radius: 0.5rem; }
+        .fancy-btn { background: linear-gradient(90deg,#7C3AED,#4F46E5); color: white; padding: 0.6rem 1rem; border-radius: 0.6rem; box-shadow: 0 6px 18px rgba(79,70,229,0.18); }
+        .muted { color: #6B7280; }
+        .stat-pill { background: rgba(79,70,229,0.08); padding: 0.25rem 0.5rem; border-radius: 9999px; color: #4F46E5; font-weight:600; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <!-- Sidebar -->
+        <div class="w-full md:w-64 bg-white card-shadow z-10">
+            <div class="p-4 flex items-center justify-between md:justify-center border-b">
+                <div class="flex items-center space-x-2">
+                    <img src="https://placehold.co/40x40/4F46E5/FFFFFF?text=Edu" alt="EduAI logo with modern purple gradient and white text" class="w-8 h-8 rounded-lg">
+                    <span class="text-xl font-bold text-gray-800 hidden md:block">EduAI</span>
+                </div>
+                <button class="md:hidden text-gray-500" id="menuToggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+            <nav class="p-4 space-y-2 hidden md:block" id="sidebarNav">
+                <a href="#" class="nav-btn flex items-center space-x-2 p-2 rounded-lg bg-indigo-50 text-indigo-700" data-view="dashboard">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-btn flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-700" data-view="subjects">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                    <span>Subjects</span>
+                </a>
+                <a href="#" class="nav-btn flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-700" data-view="study">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>Study</span>
+                </a>
+                <a href="#" class="nav-btn flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-700" data-view="ai">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>AI Tutor</span>
+                </a>
+                <a href="#" class="nav-btn flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-700" data-view="quizzes">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span>Quizzes</span>
+                </a>
+                <a href="#" class="nav-btn flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-700" data-view="flashcards">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span>Flashcards</span>
+                </a>
+                <a href="#" class="nav-btn flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-700" data-view="store">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V7a2 2 0 00-2-2h-3.586A1 1 0 0113 4.586L11.414 6H7a2 2 0 00-2 2v5" />
+                    </svg>
+                    <span>Store</span>
+                </a>
+                <a href="#" class="nav-btn flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-700" data-view="leaderboard">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18" />
+                    </svg>
+                    <span>Leaderboard</span>
+                </a>
+                <a href="#" class="nav-btn flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 text-gray-700" data-view="settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 bg-gray-50">
+            <!-- Top Navigation -->
+            <header class="bg-white card-shadow">
+                <div class="p-4 flex items-center justify-between relative">
+                    <div class="flex items-center space-x-4">
+                        <h1 class="text-xl font-semibold text-gray-800">Student Dashboard</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="coins-display text-sm">Coins: <strong id="coins">0</strong></div>
+                        <select id="lang-select" class="border p-1 rounded text-sm">
+                            <option value="en">EN</option>
+                            <option value="hi">HI</option>
+                        </select>
+                        <button id="btn-offline" class="px-2 py-1 bg-gray-100 rounded text-sm">Offline</button>
+                        <div class="relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                                <img src="https://placehold.co/40x40/4F46E5/FFFFFF?text=JS" alt="Profile picture of student with initials JS in purple circle" class="w-8 h-8 rounded-full" id="profile-avatar">
+                                <span id="profile-name" class="hidden md:inline text-sm font-medium">John Student</span>
+                            </div>
+                        <!-- Small global sign out button in top-right of header -->
+                        <button id="signout-global" title="Sign out" class="absolute top-3 right-3 px-2 py-1 text-xs bg-red-500 hover:bg-red-600 text-white rounded shadow-sm">Sign Out</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main id="view-root" class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <!-- Performance Summary -->
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Overall Performance</h2>
+                        <div class="flex justify-center">
+                            <div class="relative w-40 h-40">
+                                <svg class="w-full h-full" viewBox="0 0 100 100">
+                                    <circle class="progress-ring__circle" stroke="#E5E7EB" stroke-width="8" fill="transparent" r="40" cx="50" cy="50" />
+                                    <circle class="progress-ring__circle" stroke="#4F46E5" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="75.36" fill="transparent" r="40" cx="50" cy="50" />
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <div class="text-3xl font-bold text-indigo-600">82%</div>
+                                        <div class="text-sm text-gray-500">Current Score</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="text-sm text-gray-500">Assignments</div>
+                                <div class="font-medium">78/100</div>
+                                <div class="h-1 bg-gray-200 rounded-full mt-1">
+                                    <div class="h-1 bg-yellow-500 rounded-full" style="width:78%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">Quizzes</div>
+                                <div class="font-medium">85/100</div>
+                                <div class="h-1 bg-gray-200 rounded-full mt-1">
+                                    <div class="h-1 bg-green-500 rounded-full" style="width:85%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">Participation</div>
+                                <div class="font-medium">90/100</div>
+                                <div class="h-1 bg-gray-200 rounded-full mt-1">
+                                    <div class="h-1 bg-blue-500 rounded-full" style="width:90%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500">Final Exam</div>
+                                <div class="font-medium">75/100</div>
+                                <div class="h-1 bg-gray-200 rounded-full mt-1">
+                                    <div class="h-1 bg-purple-500 rounded-full" style="width:75%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Weak Areas -->
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Focus Areas</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Calculus</span>
+                                    <span class="text-sm text-gray-500">High Priority</span>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full">
+                                    <div class="h-2 bg-red-500 rounded-full" style="width:65%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Data Structures</span>
+                                    <span class="text-sm text-gray-500">Medium Priority</span>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full">
+                                    <div class="h-2 bg-yellow-500 rounded-full" style="width:40%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Algorithms</span>
+                                    <span class="text-sm text-gray-500">Medium Priority</span>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full">
+                                    <div class="h-2 bg-yellow-500 rounded-full" style="width:35%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">Statistics</span>
+                                    <span class="text-sm text-gray-500">Low Priority</span>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full">
+                                    <div class="h-2 bg-green-500 rounded-full" style="width:15%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 bg-blue-50 p-4 rounded-lg">
+                            <h3 class="font-medium text-blue-800">AI Recommendation</h3>
+                            <p class="text-sm text-blue-700">Our AI suggests focusing 60% of your study time on Calculus for the next 2 weeks, followed by Data Structures (30%) and Algorithms (10%).</p>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Deadlines -->
+                    <div class="bg-white rounded-xl p-6 card-shadow">
+                        <h2 class="text-lg font-semibold text-gray-800 mb-4">Upcoming Deadlines</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="bg-indigo-100 p-2 rounded-lg mr-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">Calculus Assignment</h3>
+                                    <p class="text-sm text-gray-500">Due in 2 days</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-purple-100 p-2 rounded-lg mr-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">Data Structures Quiz</h3>
+                                    <p class="text-sm text-gray-500">Due in 5 days</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="bg-green-100 p-2 rounded-lg mr-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-medium">Midterm Exam</h3>
+                                    <p class="text-sm text-gray-500">Due in 14 days</p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="mt-6 w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition duration-200">
+                            View All Tasks
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Learning Path -->
+                <div class="bg-white rounded-xl p-6 card-shadow mb-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800">Personalized Learning Path</h2>
+                        <button class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View Full Path</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <div class="flex space-x-4 pb-4">
+                            <div class="flex-shrink-0 w-72 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-medium text-blue-800">Calculus Basics</h3>
+                                    <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">In Progress</span>
+                                </div>
+                                <p class="text-sm text-blue-700 mb-3">Master fundamental concepts of differential calculus</p>
+                                <div class="flex items-center text-xs text-blue-600 mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    3 hours remaining
+                                </div>
+                                <div class="bg-white h-2 rounded-full mb-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 45%"></div>
+                                </div>
+                                <button class="w-full py-1.5 bg-white border border-blue-300 text-blue-600 text-sm rounded-md hover:bg-blue-50 transition duration-200">
+                                    Continue
+                                </button>
+                            </div>
+                            <div class="flex-shrink-0 w-72 bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-medium text-purple-800">Linear Algebra</h3>
+                                    <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">Coming Up</span>
+                                </div>
+                                <p class="text-sm text-purple-700 mb-3">Vectors, matrices and linear transformations</p>
+                                <div class="flex items-center text-xs text-purple-600 mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    5 hour estimate
+                                </div>
+                                <div class="bg-white h-2 rounded-full mb-2">
+                                    <div class="bg-purple-500 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <button class="w-full py-1.5 bg-white border border-purple-300 text-purple-600 text-sm rounded-md hover:bg-purple-50 transition duration-200">
+                                    Preview
+                                </button>
+                            </div>
+                            <div class="flex-shrink-0 w-72 bg-green-50 p-4 rounded-lg border border-green-100">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-medium text-green-800">Probability Theory</h3>
+                                    <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Coming Up</span>
+                                </div>
+                                <p class="text-sm text-green-700 mb-3">Introduction to probability distributions</p>
+                                <div class="flex items-center text-xs text-green-600 mb-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    4 hour estimate
+                                </div>
+                                <div class="bg-white h-2 rounded-full mb-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                                </div>
+                                <button class="w-full py-1.5 bg-white border border-green-300 text-green-600 text-sm rounded-md hover:bg-green-50 transition duration-200">
+                                    Preview
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Tutor Chat -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-semibold text-gray-800">AI Tutor Assistant</h2>
+                        <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Online</span>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 h-64 overflow-y-auto mb-4" id="chatWindow">
+                        <div class="chat-message space-y-4">
+                            <div class="flex justify-start">
+                                <div class="flex-shrink-0 mr-3">
+                                    <img src="https://placehold.co/32x32/4F46E5/FFFFFF?text=AI" alt="AI assistant avatar with gradient purple background and white AI text" class="w-8 h-8 rounded-full">
+                                </div>
+                                <div class="bg-white p-3 rounded-lg max-w-xs md:max-w-md card-shadow">
+                                    <p class="text-sm">Hello! I'm your AI tutor. How can I help you with your studies today?</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <div class="bg-indigo-600 text-white p-3 rounded-lg max-w-xs md:max-w-md card-shadow">
+                                    <p class="text-sm">Can you explain derivatives in calculus?</p>
+                                </div>
+                            </div>
+                            <div class="flex justify-start">
+                                <div class="flex-shrink-0 mr-3">
+                                    <img src="https://placehold.co/32x32/4F46E5/FFFFFF?text=AI" alt="AI assistant avatar with gradient purple background and white AI text" class="w-8 h-8 rounded-full">
+                                </div>
+                                <div class="bg-white p-3 rounded-lg max-w-xs md:max-w-md card-shadow">
+                                    <p class="text-sm">Certainly! A derivative represents the rate of change of a function with respect to a variable. In simpler terms, it tells you how fast a quantity is changing at any given point.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <input type="text" placeholder="Ask your study question..." class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="ai-mock.js"></script>
+    <script src="main.js"></script>
+    <script>
+        // Initialize the app (main.js exposes App.init)
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.App && typeof window.App.init === 'function') {
+                window.App.init();
+            }
+        });
+    </script>
+</body>
+</html>
